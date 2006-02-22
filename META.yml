@@ -1,0 +1,16 @@
+---
+name: Net-RTP
+version: 0.01
+author:
+  - 'Nicholas Humfrey, njh@ecs.soton.ac.uk'
+abstract: Real-time Transport Protocol (RFC3550)
+license: lgpl
+requires:
+  Test: 1.00
+build_requires:
+  Module::Build: 0.20
+provides:
+  Net::RTP:
+    file: lib/Net/RTP.pm
+    version: 0.01
+generated_by: Module::Build version 0.2611
