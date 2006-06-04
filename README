@@ -1,11 +1,20 @@
-Net-RTP version 0.01
+Net-RTP version 0.02
 ====================
+
+This is a pure perl implementation of 
+Real-time Transport (RTP) Protocol (RFC3550).
+
+The Net::RTP module is used to send a receive RTP packets.
+
+The Net::RTP::Packet module is used to parse the RTP packet headers. 
+It may be used totally independently of Net::RTP if you want to handle
+sending and receiving packets yourself.
 
 
 INSTALLATION
 ------------
 
-	I now use Module::Build to build and install the module.
+	I use Module::Build to build and install the module.
 	To install this module type the following:
 	
 		perl Build.PL
@@ -24,117 +33,14 @@ INSTALLATION
 DEPENDENCIES
 ------------
 
-	This module requires oRTP library on your system.
-	http://www.linphone.org/ortp/
-	
-	Version 0.9.x of oRTP is recommended (currently in CVS).
-
-
-
-API OVERVIEW
-------------
-
-	Methods marked with a dash will be included in version 0.1.
-	Methods marked with a question mark will be included in a later release.
-
-
-	Net::RTP
-		- new( mode )  (mode={RECVONLY,SENDONLY,SENDRECV})
-		- set_blocking_mode( yesno )
-		? set_profile( profile )
-		? get_profile( )
-		- set_local_addr( addr, port )
-		- get_local_port()
-		- set_remote_addr( addr, port )
-		- get_jitter_compensation( )
-		- set_jitter_compensation( milisec )
-		- set_adaptive_jitter_compensation( yesno )
-		- get_adaptive_jitter_compensation()
-		- set_send_ssrc( ssrc )
-		- get_send_ssrc( )
-		- set_send_seq_number( seq )
-		- get_send_seq_number( )
-		- set_send_payload_type( pt )
-		- get_send_payload_type( )
-		- set_recv_payload_type( pt )
-		- get_recv_payload_type( )
-		- get_send_ts( )
-		- get_recv_ts( )
-
-		? signal_connect( signal, callback, userdata )
-		? signal_disconnect( signal, callback )
-		
-		- recv_with_ts( bytes, ts )
-		- send_with_ts( data, ts )
-		? create_packet( payload )
-		? recv_packet_with_ts( ts )
-		? send_packet_with_ts( packet, ts )
-		? get_current_send_ts()
-		? get_current_recv_ts()
-
-
-		- flush_sockets()
-		- reset()
-		? release_sockets()
-		? set_source_description( cname, name, email, phone, loc, tool, note )
-		? send_bye()
-
-
-	Net::RTP::Packet
-		? set_payload( data )
-		? get_payload()
-		? set_markbit( value )
-		? get_markbit()
-		? set_seqnumber( seq )
-		? get_seqnumber()
-		? set_timestamp( ts )
-		? get_timestamp()
-		? set_ssrc( ssrc )
-		? get_ssrc()
-		? set_payload_type( pt )
-		? get_payload_type()
-
-
-	Net::RTP::TelephoneEvent
-		? get_event
-		? set_event
-		? get_volume
-		? set_volume
-		? get_endbit
-		? set_endbit
-		? get_duration
-		? set_duration
-
-	Net::RTP::Profile
-		? get_name
-		? get_payload( index )
-		? get_payload_from_mime
-		? get_payload_from_rtpmap
-		? get_payload_number_from_mime
-		? get_payload_number_from_rtpmap
-		? find_payload_number
-		? find_payload
-	
-	$Net::RTP::Profile::AV
-		* instance of Net::RTP::Profile
-
-	Net::RTP::PayloadType
-		? get_media_type
-		? get_clock_rate
-		? get_bits_per_sample
-		? get_pattern_length
-		? get_normal_bitrate
-		? get_mime_type
-		? get_format_parameters
-	
-	
-		
+	This module requires the IO::Socket::Multicast perl module,
+	which in-turn requires IO::Interface. 
 		
 
 AUTHOR
 ------
 
-	Nicholas Humfrey, njh@ecs.soton.ac.uk
+	Nicholas Humfrey, njh@cpan.org
 
 
 COPYRIGHT AND LICENSE

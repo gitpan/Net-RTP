@@ -1,2 +1,0 @@
-TYPEMAP
-RtpSession*	T_PTROBJ

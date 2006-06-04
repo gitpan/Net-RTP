@@ -10,13 +10,15 @@
 #
 
 use Net::RTP;
+use Time::HiRes qw/ usleep /; 
 use strict;
 
 
-my $PACKET_SIZE = 160;		# 160 samples per packet
+my $PAYLOAD_TYPE = 0;		# u-law
+my $PAYLOAD_SIZE = 160;		# 160 samples per packet
 
 
-# Unbuffered
+# Make STDOUT unbuffered
 $|=1;
 
 # Check the number of arguments
@@ -33,32 +35,37 @@ print "Remote Port: $port\n";
 
 
 
-# Create a send object
-my $rtp = new Net::RTP('SENDONLY');
+# Create RTP socket
+my $rtp = new Net::RTP(
+		PeerPort=>$port,
+		PeerAddr=>$address,
+);
 
-# Set it up
-$rtp->set_blocking_mode( 1 );
-$rtp->set_remote_addr( $address, $port );
-$rtp->set_send_payload_type( 0 );
+
+# Create RTP packet
+my $packet = new Net::RTP::Packet();
+$packet->payload_type( $PAYLOAD_TYPE );
 
 
 # Open the input file
 open(PCMU, $filename) or die "Failed to open input file: $!";
 
-
 my $data;
-my $user_ts = 0;
-while( my $read = read( PCMU, $data, $PACKET_SIZE ) ) {
-	#print "Read $read bytes.\n";
+while( my $read = read( PCMU, $data, $PAYLOAD_SIZE ) ) {
+
+	# Set payload, and increment sequence number and timestamp
+	$packet->payload($data);
+	$packet->seq_num_increment();
+	$packet->timestamp_increment( $PAYLOAD_SIZE );
 	
-	my $sent = $rtp->send_with_ts( $data, $user_ts );
+	my $sent = $rtp->send( $packet );
 	#print "Sent $sent bytes.\n";
 	
-	# Increment the timestamp
-	$user_ts+=$PACKET_SIZE;
-	
-	print ".";
+	# This isn't a very good way of timing it
+	# but it kinda works
+	usleep( 1000000 * $PAYLOAD_SIZE / 8000 );
 }
 
-
 close( PCMU );
+
+
