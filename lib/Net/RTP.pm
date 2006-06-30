@@ -17,7 +17,7 @@ use Carp;
 use vars qw/$VERSION @ISA/;
 
 @ISA = qw/IO::Socket::Multicast/;
-$VERSION="0.02";
+$VERSION="0.03";
 
 sub new {
     my $class = shift;
@@ -34,7 +34,7 @@ sub recv {
 	# Receive a binary packet
 	my $data = undef;
 	my $sockaddr_in = $self->SUPER::recv($data, $size);
-	if (defined $data) {
+	if (defined $data and $data ne '') {
 	
 		# Parse the packet
 		my $packet = new Net::RTP::Packet( $data );
@@ -98,7 +98,7 @@ Net::RTP - Send and recieve RTP packets (RFC3550)
 
 =head1 DESCRIPTION
 
-The Net::RTP module subclasses IO::Socket::Multicast to enable
+The C<Net::RTP> module subclasses L<IO::Socket::Multicast> to enable
 you to manipulate multicast groups. The multicast additions are 
 optional, so you may also send and recieve unicast packets.
 
@@ -107,8 +107,8 @@ optional, so you may also send and recieve unicast packets.
 =item $rtp = new Net::RTP( [LocalPort=>$port,...] )
 
 The new() method is the constructor for the Net::RTP class. 
-It takes the same arguments as IO::Socket::Multicast and IO::Socket::INET.
-As with IO::Socket::Multicast the B<Proto> argument defaults
+It takes the same arguments as L<IO::Socket::Multicast> and L<IO::Socket::INET>.
+As with L<IO::Socket::Multicast> the B<Proto> argument defaults
 to "udp", which is more appropriate for RTP.
 
 To create a UDP socket suitable for sending outgoing RTP packets, 
@@ -117,7 +117,7 @@ incoming RTP packets on a specific port, call new() with
 the B<LocalPort> argument.
 
 If you plan to run the client and server on the same machine, you may
-wish to set the IO::Socket B<ReuseAddr> argument to a true value.
+wish to set the L<IO::Socket> B<ReuseAddr> argument to a true value.
 This allows multiple multicast sockets to bind to the same address.
 
 
@@ -157,7 +157,7 @@ be notified of progress on your bug as I make changes.
 
 =head1 AUTHOR
 
-Nicholas Humfrey, njh@cpan.org
+Nicholas J Humfrey, njh@cpan.org
 
 =head1 COPYRIGHT AND LICENSE
 

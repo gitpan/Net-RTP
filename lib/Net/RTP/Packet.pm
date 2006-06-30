@@ -4,22 +4,21 @@ package Net::RTP::Packet;
 #
 # Net::RTP::Packet: Pure Perl RTP Packet object (RFC3550)
 #
-# Nicholas Humfrey
-# njh@cpan.org
+# Nicholas J Humfrey, njh@cpan.org
 #
 
 use strict;
 use Carp;
 
 use vars qw/$VERSION/;
-$VERSION="0.02";
+$VERSION="0.03";
+
+# Generate a very random seed
+srand(time ^ $$ ^ unpack("%L*", `ps axww | gzip`));
 
 sub new {
     my $class = shift;
 	my ($bindata) = @_;
-	
-	# Very random seed
-	srand(time ^ $$ ^ unpack("%L*", `ps axww | gzip`));
 
 	# Store parameters
     my $self = {
@@ -28,19 +27,26 @@ sub new {
 		extension => 0,
 		marker => 0,
 		payload_type => 0,
-		seq_num => int(rand(2**16)),
-		timestamp => int(rand(2**32)),
-		ssrc => int(rand(2**32)),
+		seq_num => 0,
+		timestamp => 0,
+		ssrc => 0,
 		csrc => [],
 		payload => '',
+		size => undef,
 		source_ip => undef,
 		source_port => undef,
     };
     bless $self, $class;
 
+
 	# Decode binary packet?
 	if (defined $bindata) {
 		$self->decode( $bindata );
+	} else {
+		# Randomise sequence, timestamp and SSRC
+		$self->{'seq_num'} = int(rand(2**16));
+		$self->{'timestamp'} = int(rand(2**32));
+		$self->{'ssrc'} = int(rand(2**32));
 	}
 	
 	return $self;
@@ -156,11 +162,25 @@ sub source_port {
 	return $self->{'source_port'};
 }
 
+sub size {
+	my $self = shift;
+	
+	# Encode the packet if the size isn't known
+	unless (defined $self->{'size'}) {
+		# Not very efficient, but sure to work
+		$self->encode();
+	}
+	
+	return $self->{'size'};
+}
 
 sub decode {
 	my $self = shift;
 	my ($bindata) = @_;
 	
+	# Store the size of the packet we are decoding
+	$self->{'size'} = length( $bindata );
+
 	# Decode the binary header (network endian)
 	my ($vpxcc, $mpt, $seq_num, $timestamp, $ssrc) = unpack( 'CCnNN', $bindata );
 	$bindata = substr( $bindata, 12 );
@@ -181,6 +201,7 @@ sub decode {
 	$self->{'seq_num'} = $seq_num;
 	$self->{'timestamp'} = $timestamp;
 	$self->{'ssrc'} = $ssrc;
+
 	
 	# Process CSRC list
 	for(my $c=0; $c<$csrc_count; $c++) {
@@ -254,6 +275,9 @@ sub encode {
 		}
 		$bindata .= pack('C', $self->{'padding'});
 	}
+	
+	# Store the size of the encoded packet
+	$self->{'size'} = length( $bindata );
 	
 	return $bindata;
 }
@@ -373,6 +397,12 @@ If the source IP is not known, the value is undefined.
 Return the source port of the packet (as an ASCII string).
 If the source port is not known, the value is undefined.
 
+=item $packet->size()
+
+Return the length (in bytes) of the binary RTP packet.
+
+Note: The size of the packet is only calculated during encode() and decode().
+
 =item $packet->decode( $binary )
 
 Decodes binary RTP packet header into the packet object.
@@ -399,7 +429,7 @@ be notified of progress on your bug as I make changes.
 
 =head1 AUTHOR
 
-Nicholas Humfrey, njh@cpan.org
+Nicholas J Humfrey, njh@cpan.org
 
 
 =head1 COPYRIGHT AND LICENSE
