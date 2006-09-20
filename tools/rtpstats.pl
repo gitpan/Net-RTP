@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# Display RTP statistics
+# Displays packet statistics for an RTP session
 #
 
 use 5.008;             # 5.8 required for stable threading
@@ -28,12 +28,9 @@ usage() unless (defined $address);
 $port = $DEFAULT_PORT unless (defined $port);
 my $rtp = new Net::RTP(
 		LocalPort=>$port,
-		LocalAddr=>$address,
-		ReuseAddr=>1
+		LocalAddr=>$address
 ) || die "Failed to create RTP socket: $!";
 
-# Join the multicast group
-$rtp->mcast_add($address) || die "Couldn't join multicast group: $!\n";
 
 
 # Shared variable used for collecting statistics
@@ -169,7 +166,7 @@ __END__
 
 =head1 NAME
 
-rtpstats.pl - Displays packet loss statistics for an RTP session
+rtpstats.pl - Displays packet statistics for an RTP session
 
 =head1 SYNOPSIS
 

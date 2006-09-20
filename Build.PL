@@ -20,10 +20,20 @@ my $build = Module::Build->new
 		'tools/rtplosslog.pl',
 	],
 	requires => {
-		'IO::Socket::Multicast' => '1.04',
-		'Test' => '1.00',
+		'Test::More' => 0,
+		'IO::Socket::INET' => '1.20',
 	},
+	
 	create_makefile_pl => 'passthrough',
+	
+	
+	# Optional modules
+	recommends => {
+		'IO::Socket::Multicast6' => '0.02',
+		'IO::Socket::Multicast' => '1.00',
+		'IO::Socket::INET6' => '2.51',
+		'Socket6' => '0.19',
+	},
 );
 
 $build->create_build_script;
