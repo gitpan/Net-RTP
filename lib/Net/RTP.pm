@@ -8,7 +8,6 @@ package Net::RTP;
 # njh@cpan.org
 #
 
-use IO::Socket::Multicast6;
 use Net::RTP::Packet;
 use Socket;
 use strict;
@@ -50,7 +49,7 @@ BEGIN {
 
 use vars qw/$VERSION @ISA $SUPER_CLASS $HAVE_SOCKET6/;
 @ISA = ($SUPER_CLASS);
-$VERSION="0.04";
+$VERSION="0.05";
 
 
 
@@ -76,7 +75,7 @@ sub configure {
 		my $group = $self->sockhost();
 		if (_is_multicast_ip($group)) {
 			if ($self->superclass() =~ /Multicast/) {
-				print "Joining group: $group\n";
+				#print "Joining group: $group\n";
 				$self->mcast_add( $group ) || croak "Failed to join multicast group";
 			} else {
 				croak "Error: can't receive multicast without either ".
