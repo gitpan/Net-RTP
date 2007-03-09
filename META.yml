@@ -1,6 +1,6 @@
 ---
 name: Net-RTP
-version: 0.07
+version: 0.08
 author:
   - 'Nicholas J Humfrey, njh@cpan.org'
 abstract: Send and receive RTP packets (RFC3550)
@@ -19,7 +19,7 @@ build_requires:
 provides:
   Net::RTP:
     file: lib/Net/RTP.pm
-    version: 0.07
+    version: 0.08
   Net::RTP::Packet:
     file: lib/Net/RTP/Packet.pm
     version: 0.05
