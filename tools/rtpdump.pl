@@ -28,15 +28,15 @@ my $count = 0;
 while (my $packet = $rtp->recv()) {
 
 	# Parse the packet
-	print "COUNT=".$count;
-	print ", SRC=[".$packet->source_ip().']:'.$packet->source_port();
-	print ", LEN=".$packet->payload_size();
-	print ", PT=".$packet->payload_type();
-	print ", SSRC=".$packet->ssrc();
-	print ", SEQ=".$packet->seq_num();
-	print ", TIME=".$packet->timestamp();
-	print ", MARK" if ($packet->marker());
-	print "\n";
+	printf("COUNT=%u".$count);
+	printf(", SRC=[%s]:%u", $packet->source_ip(), $packet->source_port());
+	printf(", LEN=%u", $packet->payload_size());
+	printf(", PT=%u", $packet->payload_type());
+	printf(", SSRC=%x", $packet->ssrc());
+	printf(", SEQ=%u", $packet->seq_num());
+	printf(", TIME=%u", $packet->timestamp());
+	printf(", MARK") if ($packet->marker());
+	printf("\n");
 
 	$count++;
 }
